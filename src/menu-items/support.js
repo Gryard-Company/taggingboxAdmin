@@ -1,5 +1,3 @@
-// third-party
-import { FormattedMessage } from 'react-intl';
 
 // assets
 import { DocumentCode2, OceanProtocol, Level, ShieldCross, InfoCircle, I24Support, Driving } from 'iconsax-react';
@@ -19,39 +17,44 @@ const icons = {
 
 const support = {
   id: 'other',
-  title: <FormattedMessage id="others" />,
+  title: "메뉴명",
   type: 'group',
   children: [
     {
-      id: 'sample-page',
-      title: <FormattedMessage id="sample-page" />,
+      id: 'member',
+      title: '회원관리',
       type: 'item',
-      url: '/sample-page',
+      url: '/member-list',
       icon: icons.samplePage
     },
     {
-      id: 'documentation',
-      title: <FormattedMessage id="documentation" />,
+      id: 'order',
+      title: '결제내역관리',
       type: 'item',
-      url: 'https://codedthemes.gitbook.io/able-pro-react/',
+      url: '/order-list',
       icon: icons.documentation,
-      external: true,
-      target: true,
-      chip: {
-        label: 'gitbook',
-        color: 'info',
-        size: 'small'
-      }
     },
     {
-      id: 'roadmap',
-      title: <FormattedMessage id="roadmap" />,
+      id: 'subscribe',
+      title: '구독관리',
       type: 'item',
-      url: 'https://codedthemes.gitbook.io/able-pro-react/roadmap',
+      url: '/subscribe-list',
       icon: icons.roadmap,
+    },
+    {
+      id: 'documentation',
+      title: '홈페이지이동',
+      type: 'item',
+      url: 'https://taggingbox.im:3443',
+      icon: icons.documentation,
       external: true,
       target: true
-    }
+      // chip: {
+      //   label: 'gitbook',
+      //   color: 'info',
+      //   size: 'small'
+      // }
+    },
   ]
 };
 
