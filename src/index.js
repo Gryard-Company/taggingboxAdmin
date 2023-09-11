@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider as ReduxProvider } from 'react-redux';
 
 // fonts
-import 'assets/fonts/inter/inter.css';
+import 'assets/fonts/pretendard/fonts.css';
 
 // scroll bar
 import 'simplebar/dist/simplebar.css';
@@ -24,6 +24,8 @@ import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
+
+import "assets/custom.css";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 

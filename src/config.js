@@ -40,8 +40,8 @@ const config = {
    * `'Poppins', sans-serif`
    * `'Roboto', sans-serif`
    * `'Public Sans', sans-serif` (default)
-   */
-  fontFamily: `Inter var`,
+   */  
+  fontFamily: `Pretendard var`,
 
   /**
    * The props used for display menu-items with multi-language.
@@ -105,7 +105,7 @@ const config = {
    * 'theme7'
    * 'theme8'
    */
-  presetColor: 'default',
+  presetColor: 'theme6',
 
   /**
    * the props used for default theme direction

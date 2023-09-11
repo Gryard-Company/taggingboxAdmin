@@ -1,0 +1,22 @@
+/* custom */
+.login_bg {
+    background: url(images/bg_login.png) no-repeat 50% / cover #d0d5da;  
+    /* background: url(images/bg_login.png) no-repeat 50% / cover #f3f5f7;    */
+    animation: bg 2s ease-in-out Infinite alternate;
+    transition: animation 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@keyframes bg {
+    0% {
+       background-position-x: 0;
+       background-position-y: 0;
+    }
+    50% {
+       background-position-x: 50%;
+       background-position-y: 50%;
+    }
+    100% {
+        background-position-x: 30%;
+        background-position-y: 30%;
+    }
+ }
