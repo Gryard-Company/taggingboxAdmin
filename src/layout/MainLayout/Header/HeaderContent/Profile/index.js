@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Typography } from '@mui/material';
 
 // project-imports
 import Avatar from 'components/@extended/Avatar';
@@ -13,10 +13,11 @@ import Transitions from 'components/@extended/Transitions';
 import IconButton from 'components/@extended/IconButton';
 import useAuth from 'hooks/useAuth';
 import { ThemeMode } from 'config';
+import AuthDivider from 'sections/auth/AuthDivider';
 
 // assets
-import avatar1 from 'assets/images/users/avatar-6.png';
-import { Logout } from 'iconsax-react';
+import avatar1 from 'assets/images/avatar_basic.png';
+import { Logout, Home2 } from 'iconsax-react';
 
 // tab panel wrapper
 function TabPanel(props) {
@@ -77,7 +78,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box sx={{ flexShrink: 0, marginLeft: 'auto', marginRight: '-16px'}}>
       <ButtonBase
         sx={{
           p: 0.25,
@@ -131,25 +132,32 @@ const ProfilePage = () => {
               <ClickAwayListener onClickAway={handleClose}>
                 <MainCard border={false} content={false}>
                   <CardContent sx={{ px: 2.5, pt: 3 }}>
-                    <Grid container justifyContent="space-between" alignItems="center">
-                      <Grid item>
-                        <Stack direction="row" spacing={1.25} alignItems="center">
-                          <Avatar alt="profile user" src={avatar1} />
-                          <Stack>
-                            <Typography variant="subtitle1">{user?.name}</Typography>
-                            <Typography variant="body2" color="secondary">
-                              UI/UX Designer
-                            </Typography>
-                          </Stack>
+                    <Grid item>
+                      <Stack direction="row" spacing={1.25} alignItems="center">
+                        <Avatar alt="profile user" src={avatar1} />
+                        <Stack>
+                          <Typography variant="subtitle1" className='profile_name'>{user?.name}</Typography>
+                          <Typography variant="body2" color="secondary">
+                            태깅박스 관리자(Admin)
+                          </Typography>
                         </Stack>
-                      </Grid>
-                      <Grid item>
-                        <Tooltip title="Logout">
-                          <IconButton size="large" color="error" sx={{ p: 1 }} onClick={handleLogout}>
-                            <Logout variant="Bulk" />
-                          </IconButton>
-                        </Tooltip>
-                      </Grid>
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12} sx={{mt: 2}}>
+                      <AuthDivider>
+                      </AuthDivider>
+                    </Grid>
+                    <Grid item sx={{mt: 2}}>
+                        <IconButton size="medium" color="primary" sx={{ p: 1 }} onClick={() => window.open("https://taggingbox.im:3443")} className="btn-homelink">
+                          <Home2 variant="Bulk" /> 
+                          <Typography variant="subtitle1">태깅박스로 이동</Typography>
+                        </IconButton>
+                    </Grid>
+                    <Grid item sx={{mt: 1}}>
+                        <IconButton size="medium" color="error" sx={{ p: 1 }} onClick={handleLogout} className="btn-logout">
+                          <Logout variant="Bulk" /> 
+                          <Typography variant="subtitle1">로그아웃하기</Typography>
+                        </IconButton>
                     </Grid>
                   </CardContent>
 

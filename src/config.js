@@ -59,7 +59,7 @@ const config = {
    * 'vertical' (default)
    * 'horizontal'
    */
-  menuOrientation: MenuOrientation.VERTICAL,
+  menuOrientation: MenuOrientation.HORIZONTAL,
 
   /**
    * the props used for show/hide caption drawer

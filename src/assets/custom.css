@@ -1,22 +1,112 @@
 /* custom */
+
+/* 
+login
+ */
 .login_bg {
-    background: url(images/bg_login.png) no-repeat 50% / cover #d0d5da;  
-    /* background: url(images/bg_login.png) no-repeat 50% / cover #f3f5f7;    */
-    animation: bg 2s ease-in-out Infinite alternate;
-    transition: animation 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+   background: url(images/bg_login.png) no-repeat 50% / cover #d0d5da;
+   animation: bg 2s ease-in-out Infinite alternate;
+   transition: animation 0.6s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 @keyframes bg {
-    0% {
-       background-position-x: 0;
-       background-position-y: 0;
-    }
-    50% {
-       background-position-x: 50%;
-       background-position-y: 50%;
-    }
-    100% {
-        background-position-x: 30%;
-        background-position-y: 30%;
-    }
- }
+   0% {
+      background-position-x: 0;
+      background-position-y: 0;
+   }
+
+   50% {
+      background-position-x: 50%;
+      background-position-y: 50%;
+   }
+
+   100% {
+      background-position-x: 30%;
+      background-position-y: 30%;
+   }
+}
+
+/* 
+ common layout
+ */
+
+body {
+   background-color: #f2f2f2 !important;
+}
+
+.btn-homelink,
+.btn-logout {
+   width: 100%;
+   text-align: left;
+   justify-content: flex-start;
+   height: auto;
+   padding: 10px 8px;
+}
+
+.btn-homelink h6,
+.btn-logout h6 {
+   margin-left: 10px;
+   color: #5B6B79;
+}
+
+.btn-homelink:hover h6 {
+   color: #1a7b8a;
+}
+
+.btn-logout:hover h6 {
+   color: #F04134;
+}
+
+.profile_name {
+   overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   word-break: break-all;
+}
+
+.header_nav {
+   margin-left: 64px;
+   position: relative;
+}
+
+.header_nav::after {
+   content: '';
+   position: absolute;
+   left: -32px;
+   top: 50%;
+   transform: translateY(-50%);
+   width: 1px;
+   height: 50%;
+   background-color: rgba(219, 224, 229, 1);
+}
+
+.nav_menu {
+   width: 100%;
+   text-align: left;
+   justify-content: flex-start;
+   height: auto;
+   padding: 8px 16px;
+   color: #5B6B79;
+   border: 1px solid transparent;
+}
+
+.nav_menu h6 {
+   margin-left: 10px;
+   font-weight: 600;
+   font-size: 16px;
+}
+
+.nav_menu.active {
+   background-color: #e1f0ef;
+   box-shadow: 0px 8px 24px rgba(19, 25, 32, 0.05);
+   color: #11626e;
+   border: 1px solid #d0e9e7;
+}
+
+.nav_menu.active h6 {
+   color: #11626e;
+}
+
+header {
+   background-color: rgba(255, 255, 255, 0.8) !important;
+}
