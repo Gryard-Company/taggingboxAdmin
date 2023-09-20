@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer } from 'react';
 
 // third-party
-import { Chance } from 'chance';
 import jwtDecode from 'jwt-decode';
 
 // reducer - state management
@@ -12,8 +11,6 @@ import authReducer from 'store/reducers/auth';
 // project-imports
 import Loader from 'components/Loader';
 import axios from 'utils/axios';
-
-const chance = new Chance();
 
 // constant
 const initialState = {
@@ -36,8 +33,9 @@ const verifyToken = (serviceToken) => {
 
 const setSession = (serviceToken) => {
   if (serviceToken) {
-    localStorage.setItem('serviceToken', serviceToken);
-    axios.defaults.headers.common.Authorization = `Bearer ${serviceToken}`;
+    localStorage.setItem('tokeninfo', JSON.stringify(serviceToken));
+    localStorage.setItem('serviceToken', serviceToken.accessToken);
+    axios.defaults.headers.common.Authorization = `Bearer ${serviceToken.accessToken}`;
   } else {
     localStorage.removeItem('serviceToken');
     delete axios.defaults.headers.common.Authorization;
@@ -55,16 +53,14 @@ export const JWTProvider = ({ children }) => {
     const init = async () => {
       try {
         const serviceToken = localStorage.getItem('serviceToken');
+        const tokeninfo = JSON.parse(localStorage.getItem('tokeninfo'));
         if (serviceToken && verifyToken(serviceToken)) {
-          setSession(serviceToken);
-          const response = await axios.get('/api/account/me');
-          const { user } = response.data;
+          setSession(tokeninfo);
 
           dispatch({
             type: LOGIN,
             payload: {
-              isLoggedIn: true,
-              user
+              isLoggedIn: true
             }
           });
         } else {
@@ -84,9 +80,15 @@ export const JWTProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post('/api/account/login', { email, password });
-    const { serviceToken, user } = response.data;
-    setSession(serviceToken);
+    const response = await axios.post('api/admin/login', { userid : email, password });
+    console.log(response.data);
+    if(response.data.code != 0){
+      console.log(response.data.msg);
+      throw new Error(response.data.msg);
+    }
+    const { tokenInfo,user } = response.data.data;
+    setSession(tokenInfo);
+
     dispatch({
       type: LOGIN,
       payload: {
@@ -96,48 +98,17 @@ export const JWTProvider = ({ children }) => {
     });
   };
 
-  const register = async (email, password, firstName, lastName) => {
-    // todo: this flow need to be recode as it not verified
-    const id = chance.bb_pin();
-    const response = await axios.post('/api/account/register', {
-      id,
-      email,
-      password,
-      firstName,
-      lastName
-    });
-    let users = response.data;
-
-    if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
-      const localUsers = window.localStorage.getItem('users');
-      users = [
-        ...JSON.parse(localUsers),
-        {
-          id,
-          email,
-          password,
-          name: `${firstName} ${lastName}`
-        }
-      ];
-    }
-
-    window.localStorage.setItem('users', JSON.stringify(users));
-  };
 
   const logout = () => {
     setSession(null);
     dispatch({ type: LOGOUT });
   };
 
-  const resetPassword = async () => {};
-
-  const updateProfile = () => {};
-
   if (state.isInitialized !== undefined && !state.isInitialized) {
     return <Loader />;
   }
 
-  return <JWTContext.Provider value={{ ...state, login, logout, register, resetPassword, updateProfile }}>{children}</JWTContext.Provider>;
+  return <JWTContext.Provider value={{ ...state, login, logout }}>{children}</JWTContext.Provider>;
 };
 
 JWTProvider.propTypes = {

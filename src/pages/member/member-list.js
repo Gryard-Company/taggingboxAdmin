@@ -1,19 +1,221 @@
-const { Typography } = require("@mui/material")
+import { Fragment, useEffect, useMemo, useState } from "react"
+import axios from "utils/axios"
+
+import { format } from 'date-fns';
+
+const { Grid, Paper, Stack, Table, TableHead, TableRow, TableCell, TableBody, useTheme, useMediaQuery, Button } = require("@mui/material") // eslint-disable-next-line
+import { alpha } from '@mui/material/styles';
+import { useFilters, useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable, usePagination } from 'react-table';
+
+import {
+    CSVExport,
+    HeaderSort,
+    // IndeterminateCheckbox,
+    // SortingSelect,
+    TablePagination,
+    TableRowSelection
+  } from 'components/third-party/ReactTable';
+import ScrollX from "components/ScrollX";
+import AddMember from "sections/member/AddMember";
+
+
+// import { GlobalFilter } from 'utils/react-table';
+  
+// ==============================|| REACT TABLE ||============================== //
+
+function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
+    console.log(selectedRow);
+    const theme = useTheme();
+    const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
+
+    // const filterTypes = useMemo(() => renderFilterTypes, []);
+    const sortBy = { id: 'memId', desc: false };
+    
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        prepareRow,
+        setHiddenColumns,
+        // allColumns,
+        //   visibleColumns, // eslint-disable-next-line
+        rows,
+        page,
+        gotoPage,
+        setPageSize,
+        state: { selectedRowIds, pageIndex, pageSize },
+        // setSortBy,
+        selectedFlatRows
+    } = useTable(
+      {
+        columns,
+        data,
+        // filterTypes,
+        initialState: { pageIndex: 0, pageSize: 10, sortBy: [sortBy] }
+      },
+      useGlobalFilter,
+      useFilters,
+      useSortBy,
+      useExpanded,
+      usePagination,
+      useRowSelect
+    );
+
+    useEffect(() => {
+      if (matchDownSM) {
+        setHiddenColumns(['age', 'contact', 'visits', 'email', 'status', 'avatar']);
+      } else {
+        setHiddenColumns(['avatar', 'email']);
+      }
+      // eslint-disable-next-line
+    }, [matchDownSM]);
+
+    // 유저 선택 이벤트
+    const handleRowClick = (row) => {
+        setSelectedRow(row);
+    };
+  
+    return (
+      <>
+        <TableRowSelection selected={Object.keys(selectedRowIds).length} />
+        <Stack spacing={3}>
+          <Stack
+            direction={matchDownSM ? 'column' : 'row'}
+            spacing={1}
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ p: 3, pb: 0 }}
+          >
+            {/* <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /> */}
+            <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
+              {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
+              <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />
+              <Button onClick={() => setSelectedRow(null)}>New</Button>
+            </Stack>
+          </Stack>
+          <Table {...getTableProps()}>
+            <TableHead>
+              {headerGroups.map((headerGroup) => (
+                <TableRow key={headerGroup} {...headerGroup.getHeaderGroupProps()} sx={{ '& > th:first-of-type': { width: '58px' } }}>
+                  {headerGroup.headers.map((column) => (
+                    <TableCell key={column} {...column.getHeaderProps([{ className: column.className }])}>
+                      <HeaderSort column={column} sort />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody {...getTableBodyProps()}>
+              {page.map((row, i) => {
+                prepareRow(row);
+  
+                return (
+                  <Fragment key={i}>
+                    <TableRow
+                      {...row.getRowProps()}
+                      onClick={() => {
+                        handleRowClick(row);
+                      }}
+                      sx={{ cursor: 'pointer', bgcolor: selectedRow?.id == row.id ? alpha(theme.palette.primary.lighter, 0.35) : 'inherit' }}
+                    >
+                      {row.cells.map((cell) => {
+                        if (cell.column.id === 'memRegister' || cell.column.id === 'memLastLogin') {
+                            return (
+                                <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
+                                { cell.value ? format(new Date(cell.value),'yyyy-MM-dd H:mm:ss') : ''}
+                                </TableCell>
+                            )
+                        } else {
+                            return(
+                                <TableCell key={cell} {...cell.getCellProps([{ className: cell.column.className }])}>
+                                {cell.render('Cell')}
+                                </TableCell>
+                            )
+                        }
+                      })}
+                    </TableRow>
+                  </Fragment>
+                );
+              })}
+              <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
+                <TableCell sx={{ p: 2, py: 3 }} colSpan={9}>
+                  <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageSize={pageSize} pageIndex={pageIndex} />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Stack>
+      </>
+    );
+}
+
+// ==============================|| Memberlist - LIST ||============================== //
 
 const MemberList = () => {
 
+    const [memberList, setMemberList] = useState([]);
+    const [selectedRow, setSelectedRow] = useState(null);
+    
+
+    const getMemberList = () => {
+        
+        let param = {} // 검색,필터
+        
+        axios.post('api/admin/member-list',param).then((res)=>{
+            console.log(res.data.list)
+            setMemberList(res.data.list);
+        });
+    }
+
+    useEffect(()=>{
+        getMemberList();
+    },[])
+
+    const columns = useMemo(
+        () => [
+          {
+            Header: '아이디',
+            accessor: 'memUserid'
+          },
+          {
+            Header: '닉네임',
+            accessor: 'memUsernm'
+          },
+          {
+            Header: '최근 로그인일자',
+            accessor: 'memLastLogin'
+          },
+          {
+            Header: '가입일자',
+            accessor: 'memRegister'
+          },
+        ],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      );
 
     return (
-        <Typography>멤버 관리 리스트 페이지 입니다 :ㅇ</Typography>
-        // 회원관리에 필요한 항목들
-        // 리스트
-        // 아이디, 닉네임, 가입일...?
+        <Grid container spacing={2}>
+            {/* 첫 번째 영역 */}
+            <Grid item xs={6}>
+                <Paper elevation={3} style={{ padding: 20 }}>
+                <ScrollX>
+                    {
+                        memberList.length > 0 &&
+                        <ReactTable columns={columns} data={memberList} setSelectedRow={setSelectedRow} selectedRow={selectedRow} />
+                    }
+                </ScrollX>
+                </Paper>
+            </Grid>
 
-        // 회원 상세정보
-        // 수정 가능
-        // 등록화면...?
-        // 회원가입 화면이랑 비슷하게 가면 될듯..?(닉네임,아이콘만 추가?)
-        // 그 외 기타 정보들도 표시할 수 있을지도(현재 이용중인 사전수? 등등)
+            {/* 두 번째 영역 */}
+            <Grid item xs={6}>
+                <Paper elevation={3} style={{ padding: 20 }}>
+                {
+                    <AddMember user={selectedRow?.original} getMemberList={getMemberList}/>
+                }
+                </Paper>
+            </Grid>
+        </Grid>
     )
 }
 

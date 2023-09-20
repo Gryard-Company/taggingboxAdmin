@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const axiosServices = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3010/' });
+const axiosServices = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'https://taggingbox.im:8443/' });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 

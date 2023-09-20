@@ -45,13 +45,13 @@ const AuthLogin = () => {
     <>
       <Formik
         initialValues={{
-          email: 'info@phoenixcoded.co',
-          password: '123456',
+          email: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          email: Yup.string().max(255).required('아이디를 입력해주세요'),
+          password: Yup.string().max(255).required('비밀번호를 입력해주세요')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
@@ -62,9 +62,10 @@ const AuthLogin = () => {
             }
           } catch (err) {
             console.error(err);
+            let errMsg =  err?.msg !== undefined ? err.msg : err.message;
             if (scriptedRef.current) {
               setStatus({ success: false });
-              setErrors({ submit: err.message });
+              setErrors({ submit: errMsg });
               setSubmitting(false);
             }
           }
@@ -75,7 +76,7 @@ const AuthLogin = () => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">아이디(E-mail 주소)</InputLabel>
+                  <InputLabel htmlFor="email-login">아이디</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
