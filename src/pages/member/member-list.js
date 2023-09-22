@@ -19,7 +19,7 @@ import ScrollX from "components/ScrollX";
 import AddMember from "sections/member/AddMember";
 
 
-// import { GlobalFilter } from 'utils/react-table';
+import { GlobalFilter } from 'utils/react-table';
   
 // ==============================|| REACT TABLE ||============================== //
 
@@ -43,8 +43,10 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
         page,
         gotoPage,
         setPageSize,
-        state: { selectedRowIds, pageIndex, pageSize },
+        state: { globalFilter, selectedRowIds, pageIndex, pageSize },
         // setSortBy,
+        preGlobalFilteredRows,
+        setGlobalFilter,
         selectedFlatRows
     } = useTable(
       {
@@ -63,9 +65,9 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
 
     useEffect(() => {
       if (matchDownSM) {
-        setHiddenColumns(['age', 'contact', 'visits', 'email', 'status', 'avatar']);
+        setHiddenColumns(['memRegister']);
       } else {
-        setHiddenColumns(['avatar', 'email']);
+        setHiddenColumns(['memRegister']);
       }
       // eslint-disable-next-line
     }, [matchDownSM]);
@@ -86,7 +88,7 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
             alignItems="center"
             sx={{ p: 3, pb: 0 }}
           >
-            {/* <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} /> */}
+            <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
             <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
               {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
               <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />
@@ -196,7 +198,7 @@ const MemberList = () => {
     return (
         <Grid container spacing={2}>
             {/* 첫 번째 영역 */}
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                 <Paper elevation={3} style={{ padding: 20 }}>
                 <ScrollX>
                     {
@@ -208,7 +210,7 @@ const MemberList = () => {
             </Grid>
 
             {/* 두 번째 영역 */}
-            <Grid item xs={6}>
+            <Grid item xs={4}>
                 <Paper elevation={3} style={{ padding: 20 }}>
                 {
                     <AddMember user={selectedRow?.original} getMemberList={getMemberList}/>

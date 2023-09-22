@@ -122,19 +122,11 @@ const AddMember = ({ user,getMemberList }) => {
             getMemberList();
         });
 
-        // const newCustomer = {
-        //   name: values.name,
-        //   email: values.email,
-        //   location: values.location,
-        //   orderStatus: values.orderStatus
-        // };
-
         if (user) {
-          // dispatch(updateCustomer(customer.id, newCustomer)); - update
           dispatch(
             openSnackbar({
               open: true,
-              message: 'Customer update successfully.',
+              message: '회원정보가 정상적으로 수정되었습니다',
               variant: 'alert',
               alert: {
                 color: 'success'
@@ -143,11 +135,10 @@ const AddMember = ({ user,getMemberList }) => {
             })
           );
         } else {
-          // dispatch(createCustomer(newCustomer)); - add
           dispatch(
             openSnackbar({
               open: true,
-              message: 'Customer added successfully.',
+              message: '새로운 회원정보가 등록되었습니다.',
               variant: 'alert',
               alert: {
                 color: 'success'
@@ -158,7 +149,6 @@ const AddMember = ({ user,getMemberList }) => {
         }
 
         setSubmitting(false);
-        onCancel();
       } catch (error) {
         console.error(error);
       }

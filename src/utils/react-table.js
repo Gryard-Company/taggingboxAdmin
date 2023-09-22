@@ -25,7 +25,7 @@ export function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFil
   const onChange = useAsyncDebounce((value) => {
     setGlobalFilter(value || undefined);
   }, 200);
-
+  
   return (
     <OutlinedInput
       value={value || ''}
