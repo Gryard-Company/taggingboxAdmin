@@ -65,9 +65,9 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
 
     useEffect(() => {
       if (matchDownSM) {
-        setHiddenColumns(['memRegister']);
+        setHiddenColumns(['']);
       } else {
-        setHiddenColumns(['memRegister']);
+        setHiddenColumns(['']);
       }
       // eslint-disable-next-line
     }, [matchDownSM]);
@@ -81,7 +81,7 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
       <>
         <TableRowSelection selected={Object.keys(selectedRowIds).length} />
         <Stack spacing={3}>
-          <Stack
+          <Stack className="table-top"
             direction={matchDownSM ? 'column' : 'row'}
             spacing={1}
             justifyContent="space-between"
@@ -91,8 +91,10 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
             <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
             <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
               {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
-              <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />
-              <Button onClick={() => setSelectedRow(null)}>New</Button>
+              <Button onClick={() => setSelectedRow(null)} color="success" size="large" variant="contained" className="btn-xl">
+                <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />목록 다운로드
+              </Button>
+              <Button onClick={() => setSelectedRow(null)} color="warning" size="large" variant="contained" className="btn-new">새로 생성하기</Button>
             </Stack>
           </Stack>
           <Table {...getTableProps()}>
@@ -139,8 +141,8 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
                   </Fragment>
                 );
               })}
-              <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
-                <TableCell sx={{ p: 2, py: 3 }} colSpan={9}>
+              <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' }}}>
+                <TableCell sx={{ p: 2, py: 3, paddingLeft: '0 !important', paddingRight: '0 !important' }} colSpan={9}>
                   <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageSize={pageSize} pageIndex={pageIndex} />
                 </TableCell>
               </TableRow>
@@ -196,10 +198,10 @@ const MemberList = () => {
       );
 
     return (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} className="mem-wp">
             {/* 첫 번째 영역 */}
             <Grid item xs={8}>
-                <Paper elevation={3} style={{ padding: 20 }}>
+                <Paper elevation={3} style={{ padding: 20, minHeight: '702px' }}>
                 <ScrollX>
                     {
                         memberList.length > 0 &&
@@ -211,7 +213,7 @@ const MemberList = () => {
 
             {/* 두 번째 영역 */}
             <Grid item xs={4}>
-                <Paper elevation={3} style={{ padding: 20 }}>
+                <Paper elevation={3} style={{ padding: 20 }} className="sticky-box">
                 {
                     <AddMember user={selectedRow?.original} getMemberList={getMemberList}/>
                 }

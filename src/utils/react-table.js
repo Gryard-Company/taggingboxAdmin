@@ -19,8 +19,10 @@ import { Add, Minus, SearchNormal1 } from 'iconsax-react';
 
 // ==============================|| CUSTOM FUNCTION - REACT TABLE ||============================== //
 
-export function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter, ...other }) {
-  const count = preGlobalFilteredRows.length;
+export function GlobalFilter({
+  //  preGlobalFilteredRows,
+    globalFilter, setGlobalFilter, ...other }) {
+  // const count = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
   const onChange = useAsyncDebounce((value) => {
     setGlobalFilter(value || undefined);
@@ -28,12 +30,14 @@ export function GlobalFilter({ preGlobalFilteredRows, globalFilter, setGlobalFil
   
   return (
     <OutlinedInput
+    className='search-inp'
       value={value || ''}
       onChange={(e) => {
         setValue(e.target.value);
         onChange(e.target.value);
       }}
-      placeholder={`Search ${count} records...`}
+      // placeholder={`Search ${count} records...`}
+      placeholder={`검색어를 입력하세요.`}
       id="start-adornment-email"
       startAdornment={<SearchNormal1 size={18} />}
       {...other}

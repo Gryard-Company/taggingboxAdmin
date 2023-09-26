@@ -103,8 +103,22 @@ export const TablePagination = ({ gotoPage, rows, setPageSize, pageSize, pageInd
       <Grid item>
         <Stack direction="row" spacing={1} alignItems="center">
           <Stack direction="row" spacing={1} alignItems="center">
+          <TextField
+            size="small"
+            type="number"
+            value={pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) : 0;
+              gotoPage(page - 1);
+            }}
+            sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1.25, width: 30 } }}
+          />          
+          <Typography variant="caption" color="secondary">
+            번째 장.
+          </Typography>
+
             <Typography variant="caption" color="secondary">
-              Row per page
+              한 화면에
             </Typography>
             <FormControl sx={{ m: 1 }}>
               <Select
@@ -122,22 +136,12 @@ export const TablePagination = ({ gotoPage, rows, setPageSize, pageSize, pageInd
                     {option}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
+              </Select>   
+            </FormControl>         
+            <Typography variant="caption" color="secondary">
+              개 Row 보기
+            </Typography>
           </Stack>
-          <Typography variant="caption" color="secondary">
-            Go to
-          </Typography>
-          <TextField
-            size="small"
-            type="number"
-            value={pageIndex + 1}
-            onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) : 0;
-              gotoPage(page - 1);
-            }}
-            sx={{ '& .MuiOutlinedInput-input': { py: 0.75, px: 1.25, width: 36 } }}
-          />
         </Stack>
       </Grid>
       <Grid item sx={{ mt: { xs: 2, sm: 0 } }}>

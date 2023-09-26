@@ -86,12 +86,14 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
             spacing={1}
             justifyContent="space-between"
             alignItems="center"
-            sx={{ p: 3, pb: 0 }}
+            sx={{ p: 3, pb: 0, paddingLeft: '0 !important', paddingRight: '0 !important' }}
           >
             <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
             <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
               {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
-              <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />
+              <Button onClick={() => setSelectedRow(null)} color="success" size="large" variant="contained" className="btn-xl">
+                <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />목록 다운로드
+              </Button>
             </Stack>
           </Stack>
           <Table {...getTableProps()}>
@@ -133,7 +135,7 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
                 );
               })}
               <TableRow sx={{ '&:hover': { bgcolor: 'transparent !important' } }}>
-                <TableCell sx={{ p: 2, py: 3 }} colSpan={9}>
+                <TableCell sx={{ p: 2, py: 3, paddingLeft: '0 !imporatnt', paddingRight: '0 !important' }} colSpan={12}>
                   <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageSize={pageSize} pageIndex={pageIndex} />
                 </TableCell>
               </TableRow>
@@ -280,7 +282,9 @@ const OrderList = () => {
                 const {original} = row;
                 
                 return (
-                    <Button color="info" onClick={()=>{paymentCancel(original)}} >취소하기</Button>
+                  // 취소되었을때 취소해야할때 구분되었으면 좋겠어요.
+                    <Button onClick={()=>{paymentCancel(original)}} size="medium" variant="outlined" color="error">취소하기</Button>
+                    // <Button onClick={()=>{paymentCancel(original)}} size="medium" variant="outlined" color="secondary">취소하기</Button>
                 )
 
             }
@@ -291,7 +295,7 @@ const OrderList = () => {
     );
 
     return (
-        <Grid>
+        <Grid className="order-tbl">
             <Paper elevation={3} style={{ padding: 20 }}>
             <ScrollX>
                 {

@@ -3,16 +3,14 @@ import { Outlet } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { useMediaQuery, Box, Container, Toolbar } from '@mui/material';
+import { useMediaQuery, Box, Container } from '@mui/material';
 
 // project-imports
 import Drawer from './Drawer';
 import Header from './Header';
 import HorizontalBar from './Drawer/HorizontalBar';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { DRAWER_WIDTH } from 'config';
-import navigation from 'menu-items';
 import useConfig from 'hooks/useConfig';
 import { dispatch } from 'store';
 import { openDrawer } from 'store/reducers/menu';
@@ -43,7 +41,7 @@ const MainLayout = () => {
       {!isHorizontal ? <Drawer /> : <HorizontalBar />}
 
       <Box component="main" sx={{ width: `calc(100% - ${DRAWER_WIDTH}px)`, flexGrow: 1, p: { xs: 2, md: 3 } }}>
-        <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit', mb: isHorizontal ? 2 : 'inherit' }} />
+        {/* <Toolbar sx={{ mt: isHorizontal ? 8 : 'inherit', mb: isHorizontal ? 2 : 'inherit' }} /> */}
         <Container
           maxWidth={container ? 'xl' : false}
           sx={{
@@ -52,10 +50,10 @@ const MainLayout = () => {
             position: 'relative',
             minHeight: 'calc(100vh - 110px)',
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            mt: 12
           }}
         >
-          <Breadcrumbs navigation={navigation} title titleBottom card={false} divider={false} />
           <Outlet />
         </Container>
       </Box>

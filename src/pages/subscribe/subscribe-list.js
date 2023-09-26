@@ -85,13 +85,15 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
             spacing={1}
             justifyContent="space-between"
             alignItems="center"
-            sx={{ p: 3, pb: 0 }}
+            sx={{ p: 3, pb: 0, paddingLeft: '0 !important', paddingRight: '0 !important' }}
           >
             <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
             <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
               {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
-              <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />
-              <Button onClick={() => setSelectedRow(null)}>New</Button>
+              <Button onClick={() => setSelectedRow(null)} color="success" size="large" variant="contained" className="btn-xl">
+                <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />목록 다운로드
+              </Button>
+              <Button onClick={() => setSelectedRow(null)} color="warning" size="large" variant="contained" className="btn-new">새로 생성하기</Button>
             </Stack>
           </Stack>
           <Table {...getTableProps()}>
@@ -292,12 +294,14 @@ const SubscribeList = () => {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={8}>
-                <Paper elevation={3} style={{ padding: 20 }}>
-                <Button onClick={() => filterData(1)}>전체</Button>
-                <Button onClick={() => filterData(2)}>사용</Button>
-                <Button onClick={() => filterData(3)}>갱신일</Button>
-                <Button onClick={() => filterData(4)}>만료</Button>
+            <Grid item xs={9}>
+                <Paper elevation={3} style={{ padding: 20, minHeight: '590px' }}>
+                <Grid className="btn-tabs">
+                  <Button variant="outlined" color="secondary" size="medium" sx={{mr: 2}} onClick={() => filterData(1)}>전체</Button>
+                  <Button variant="outlined" color="info" size="medium" sx={{mr: 2}} onClick={() => filterData(3)}>오늘 결제(완료)</Button>
+                  <Button variant="outlined" color="success" size="medium" sx={{mr: 2}} onClick={() => filterData(2)}>사용중</Button>
+                  <Button variant="outlined" color="error" size="medium" sx={{mr: 2}} onClick={() => filterData(4)}>만료</Button>
+                </Grid>
                 <ScrollX>
                     {
                         filteredData.length > 0 &&
@@ -307,8 +311,8 @@ const SubscribeList = () => {
                 </Paper>
             </Grid>
 
-            <Grid item xs={4}>
-                <Paper elevation={3} style={{ padding: 20 }}>
+            <Grid item xs={3}>
+                <Paper elevation={3} style={{ padding: 20 }} className="sticky-box">
                     <SubscribeInfo updateData={selectedRow?.original} getSubscribeList={getSubscribeList} />
                 </Paper>
             </Grid>

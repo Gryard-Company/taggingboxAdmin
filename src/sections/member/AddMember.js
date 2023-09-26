@@ -162,9 +162,9 @@ const AddMember = ({ user,getMemberList }) => {
       <FormikProvider value={formik}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <DialogTitle>{user ? 'Edit Member' : 'New Member'}</DialogTitle>
+            <DialogTitle>{user ? '회원정보 수정' : '신규회원 등록'}</DialogTitle>
             <Divider />
-            <DialogContent sx={{ p: 2.5 }}>
+            <DialogContent sx={{ p: 3 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={3}>
                   <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
@@ -195,7 +195,7 @@ const AddMember = ({ user,getMemberList }) => {
                       >
                         <Stack spacing={0.5} alignItems="center">
                           <Camera style={{ color: theme.palette.secondary.lighter, fontSize: '2rem' }} />
-                          <Typography sx={{ color: 'secondary.lighter' }}>Upload</Typography>
+                          <Typography sx={{ color: 'secondary.lighter' }} variant='caption'>프로필등록</Typography>
                         </Stack>
                       </Box>
                     </FormLabel>
@@ -280,7 +280,7 @@ const AddMember = ({ user,getMemberList }) => {
                             input={<OutlinedInput id="select-column-hiding" placeholder="Sort by" />}
                             renderValue={(selected) => {
                               if (!selected) {
-                                return <Typography variant="subtitle1">회원 상태를 선택해주세요</Typography>;
+                                return <Typography variant="body1" color="secondary">회원 상태를 선택해주세요</Typography>;
                               }
 
                               return <Typography variant="subtitle2">{selected}</Typography>;
@@ -317,12 +317,12 @@ const AddMember = ({ user,getMemberList }) => {
               </Grid>
             </DialogContent>
             <Divider />
-            <DialogActions sx={{ p: 2.5 }}>
-              <Grid container justifyContent="space-between" alignItems="center">
+            <DialogActions sx={{ p: 3, pb: 0 }}>
+              <Grid container justifyContent="flex-end" alignItems="center">
                 <Grid item>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Button type="submit" variant="contained" disabled={isSubmitting}>
-                      {user ? 'Edit' : 'Add'}
+                    <Button type="submit" variant="contained" disabled={isSubmitting} size="large">
+                      {user ? '수정하기' : '등록하기'}
                     </Button>
                   </Stack>
                 </Grid>
