@@ -102,7 +102,7 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
         <FormikProvider value={formik}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <DialogTitle>{updateData ? 'Edit Member' : 'New Member'}</DialogTitle>
+            <DialogTitle>{updateData ? '구독정보 수정' : '구독정보 신규'}</DialogTitle>
             <Divider />
             <DialogContent sx={{ p: 2.5 }}>
               <Grid container spacing={3}>
@@ -167,12 +167,12 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
               </Grid>
             </DialogContent>
             <Divider />
-            <DialogActions sx={{ p: 2.5 }}>
-              <Grid container justifyContent="space-between" alignItems="center">
+            <DialogActions sx={{ p: 3, pb: 0 }}>
+              <Grid container justifyContent="flex-end" alignItems="center">
                 <Grid item>
                   <Stack direction="row" spacing={2} alignItems="center">
-                    <Button type="submit" variant="contained" disabled={isSubmitting}>
-                      {updateData ? 'Edit' : 'Add'}
+                    <Button type="submit" variant="contained" disabled={isSubmitting} size="large">
+                      {updateData ? '수정하기' : '등록하기'}
                     </Button>
                   </Stack>
                 </Grid>
