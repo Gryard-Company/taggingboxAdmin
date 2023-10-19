@@ -3,7 +3,7 @@ import axios from "utils/axios"
 
 import { format } from 'date-fns';
 
-const { Grid, Paper, TableRow, TableCell, TableBody, TableHead, useTheme, useMediaQuery, Stack, Table, Button } = require("@mui/material")
+const { Grid, Paper, TableRow, TableCell, TableBody, TableHead, useTheme, useMediaQuery, Stack, Table, Button, Typography } = require("@mui/material")
 import { useFilters, useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable, usePagination } from 'react-table';
 import { alpha } from '@mui/material/styles';
 
@@ -232,11 +232,11 @@ const OrderList = () => {
                 let status = '';
                 switch (values.status) {
                     case 'order':
-                        status = '주문'
+                        status = <Typography sx={{color:'green'}}>결제완료</Typography>
                         break;
 
                     case 'cancel':
-                        status = '취소'
+                        status = <Typography sx={{color:'red'}}>취소</Typography>
                         break;
                 }
                 return (
@@ -280,11 +280,20 @@ const OrderList = () => {
             accessor: 'cancel',
             Cell: ({row}) => {
                 const {original} = row;
-                
+                let result;
+                switch (original.status) {
+                  case 'order':
+                    result = <Button onClick={()=>{paymentCancel(original)}} size="medium" variant="outlined" color="error">취소하기</Button>
+                    break;
+
+                  case 'cancel':
+                    result = <Button onClick={()=>{alert('이미 취소한 거래입니다')}} size="medium" variant="outlined" color="secondary">취소하기</Button>
+                    break;
+              }
                 return (
-                  // 취소되었을때 취소해야할때 구분되었으면 좋겠어요.
-                    <Button onClick={()=>{paymentCancel(original)}} size="medium" variant="outlined" color="error">취소하기</Button>
-                    // <Button onClick={()=>{paymentCancel(original)}} size="medium" variant="outlined" color="secondary">취소하기</Button>
+                  <>
+                    {result}
+                  </>
                 )
 
             }

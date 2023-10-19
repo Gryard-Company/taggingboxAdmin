@@ -9,15 +9,9 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControl,
   FormLabel,
   Grid,
-  FormHelperText,
   InputLabel,
-  ListItemText,
-  MenuItem,
-  OutlinedInput,
-  Select,
   Stack,
   TextField,
   Typography
@@ -49,7 +43,6 @@ const InitialValues = {
     passwordChk: '',
 };
 
-const allStatus = ['정상', '탈퇴/차단'];
 
 // ==============================|| Member - ADD / EDIT ||============================== //
 
@@ -155,7 +148,7 @@ const AddMember = ({ user,getMemberList }) => {
     }
   });
 
-  const { errors, touched, handleSubmit, isSubmitting, getFieldProps, setFieldValue } = formik;
+  const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
   return (
     <>
@@ -268,7 +261,7 @@ const AddMember = ({ user,getMemberList }) => {
                         />
                       </Stack>
                     </Grid>
-                    <Grid item xs={12}>
+                    {/* <Grid item xs={12}>
                       <Stack spacing={1.25}>
                         <InputLabel htmlFor="customer-orderStatus">회원상태</InputLabel>
                         <FormControl fullWidth>
@@ -299,7 +292,7 @@ const AddMember = ({ user,getMemberList }) => {
                           </FormHelperText>
                         )}
                       </Stack>
-                    </Grid>
+                    </Grid> */}
                     {/* <Grid item xs={12}>
                       <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
                         <Stack spacing={0.5}>

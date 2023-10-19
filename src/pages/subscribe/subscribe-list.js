@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
 import axios from "utils/axios"
 
-import { format, isSameDay, isBefore, isPast } from 'date-fns';
+import { format, isSameDay, isBefore, isPast, differenceInMonths, isWithinInterval } from 'date-fns';
 
-const { Grid, Paper, TableRow, TableCell, TableBody, TableHead, useTheme, useMediaQuery, Stack, Table, Button } = require("@mui/material")
+const { Grid, Paper, TableRow, TableCell, TableBody, TableHead, useTheme, useMediaQuery, Stack, Table, Button, Typography, TextField, FormControl, Select, MenuItem } = require("@mui/material")
 import { useFilters, useExpanded, useGlobalFilter, useRowSelect, useSortBy, useTable, usePagination } from 'react-table';
 import { alpha } from '@mui/material/styles';
 
@@ -19,6 +19,8 @@ import {
 import SubscribeInfo from "sections/subscribe/SubscribeInfo";
 
 import { GlobalFilter } from 'utils/react-table';
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -87,6 +89,7 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
             alignItems="center"
             sx={{ p: 3, pb: 0, paddingLeft: '0 !important', paddingRight: '0 !important' }}
           >
+            
             <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
             <Stack direction={matchDownSM ? 'column' : 'row'} alignItems="center" spacing={2}>
               {/* <SortingSelect sortBy={sortBy.id} setSortBy={setSortBy} allColumns={allColumns} /> */}
@@ -152,6 +155,71 @@ const SubscribeList = () => {
     const [subscribeList, setSubscribeList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
+    // const [tabActive, setTabActive] = useState(1);
+
+    // 검색 항목
+    const [ status, setStatus ] = useState(1);
+    const [ startDate, setStartDate ] = useState(null);
+    const [ endDate, setEndDate ] = useState(null);
+
+    const handleStatue = (event) => {
+      setStatus(event.target.value);
+    }
+    const handleStartDate = (event) => {
+      setStartDate(event);
+    }
+    const handleEndDate = (event) => {
+      setEndDate(event);
+    }
+
+    const search = () => {
+      let filterData;
+        
+      // 1. 상태별 필터
+      switch(status){
+          // 전체
+          case 1:
+              filterData = subscribeList;
+              break;
+      
+          //사용
+          case 2:
+              filterData = subscribeList.filter((row) => isBefore(new Date(),new Date(row.next_payment_date))
+              );
+              break;
+          //만료
+          case 3:
+              filterData = subscribeList.filter((row) =>  !isSameDay(new Date(),new Date(row.next_payment_date)) && isPast(new Date(row.next_payment_date))
+              );
+              break;
+      }
+
+      // 2. 기간별 필터
+      let dateFilterDate;
+      if(startDate == null && endDate == null){
+        setFilteredData(filterData);
+        return;
+      } else if(startDate == null || endDate == null) {
+        alert('기간을 설정해 주세요.');
+        return;
+      } else {
+        console.log(filterData);
+        dateFilterDate = filterData.filter((row) => isWithinInterval(new Date(row.first_payment_date),{start:new Date(startDate),end: new Date(endDate)}) )
+      }
+
+      console.log(dateFilterDate);
+      
+
+      setFilteredData(dateFilterDate);
+
+    }
+    const searchReset = () => {
+      setStatus(1);
+      setStartDate(null);
+      setEndDate(null);
+
+      setFilteredData(subscribeList);
+    }
 
     
     const getSubscribeList = () => {
@@ -160,6 +228,7 @@ const SubscribeList = () => {
         
         axios.post('api/admin/subscribe-list',param).then((res)=>{
             console.log(res.data.list)
+
             setSubscribeList(res.data.list);
             setFilteredData(res.data.list);
         });
@@ -186,12 +255,12 @@ const SubscribeList = () => {
                 const {values} = row;
                 let subscribe_type = '';
                 switch (values.subscribe_type) {
-                    case 'PLUS_MONTHLY':
-                        subscribe_type = '유료회원(월결제)'
+                    case 'PREMIUM_MONTHLY':
+                        subscribe_type = 'Premium(월결제)'
                         break;
 
-                    case 'PLUS_SUPER':
-                        subscribe_type = '유료회원(결제X)'
+                    case 'PREMIUM_SUPER':
+                        subscribe_type = 'Premium(미결제)'
                         break;
 
                     case 'ENTERPRISE':
@@ -205,15 +274,44 @@ const SubscribeList = () => {
           },
           {
             Header: '마지막 주문ID',
-            accessor: 'last_order_id'
+            accessor: 'last_order_id',
+            Cell: ({row}) => {
+              const {values} = row;
+              return (
+                <>{ values?.last_order_id ? values?.last_order_id  : (<Typography style={{'textAlign':'center'}}>-</Typography>)}</>
+              )
+          }
           },
           {
-            Header: '다음결제일(사용가능기간)',
+            Header: '최초결제일',
+            accessor: 'first_payment_date',
+            Cell: ({row}) => {
+                const {values} = row;
+                return (
+                   <>{ values?.first_payment_date ? format(new Date(values.first_payment_date),'yyyy-MM-dd') : ''}</>
+                )
+            }
+          },
+          {
+            Header: '다음결제일',
             accessor: 'next_payment_date',
             Cell: ({row}) => {
                 const {values} = row;
                 return (
-                    <>{ values?.next_payment_date ? format(new Date(values.next_payment_date),'yyyy-MM-dd HH:mm:ss') : ''}</>
+                   <>{ values?.next_payment_date ? format(new Date(values.next_payment_date),'yyyy-MM-dd') : ''}</>
+                )
+            }
+          },
+          {
+            Header: '구독유지기간',
+            accessor: 'subscribe_period',
+            Cell: ({row}) => {
+                const {values} = row;
+
+                let monthsDifference = differenceInMonths(new Date(),new Date(values.first_payment_date));
+
+                return (
+                   <>{ monthsDifference }개월</>
                 )
             }
           },
@@ -237,77 +335,99 @@ const SubscribeList = () => {
                 const today = new Date();
 
                 return (
-                    // 색상으로 구분하면 좋을 것 같음
                     <>
-                        {isSameDay(nextPaymentDate,today) ? '갱신일' : (isBefore(today,nextPaymentDate) ? '사용중' : '만료')}
+                        {isSameDay(nextPaymentDate,today) ? <Typography style={{'color':'blue'}}>갱신일</Typography> : (isBefore(today,nextPaymentDate) ? (<Typography style={{'color':'green'}}>구독중</Typography>) : (<Typography style={{'color':'red'}}>만료</Typography>))}
                     </>
                 )
             }
           },
-          {
-            Header: '상태변경일자',
-            accessor: 'update_dt',
-            Cell: ({row}) => {
-                const {values} = row;
-                return (
-                    <>{ values?.update_dt ? format(new Date(values.update_dt),'yyyy-MM-dd HH:mm:ss') : ''}</>
-                )
-            }
-          }
 
         ],
         // eslint-disable-next-line react-hooks/exhaustive-deps
     );
     
-    const filterData = (type) => {
+    // const filterData = (type) => {
 
-        let filterData;
+    //     let filterData;
         
-        switch(type){
-            // 전체
-            case 1:
-                filterData = subscribeList;
-                break;
+    //     switch(type){
+    //         // 전체
+    //         case 1:
+    //             filterData = subscribeList;
+    //             break;
         
-            //사용
-            case 2:
-                filterData = subscribeList.filter((row) => isBefore(new Date(),new Date(row.next_payment_date))
-                );
-                break;
+    //         //사용
+    //         case 2:
+    //             filterData = subscribeList.filter((row) => isBefore(new Date(),new Date(row.next_payment_date))
+    //             );
+    //             break;
         
-            //갱신일
-            case 3:
-                filterData = subscribeList.filter((row) => isSameDay(new Date(),new Date(row.next_payment_date))
-                );
-                break;
+    //         //갱신일
+    //         case 3:
+    //             filterData = subscribeList.filter((row) => isSameDay(new Date(),new Date(row.next_payment_date))
+    //             );
+    //             break;
         
-            //만료
-            case 4:
-                filterData = subscribeList.filter((row) =>  !isSameDay(new Date(),new Date(row.next_payment_date)) && isPast(new Date(row.next_payment_date))
-                );
-                break;
-        }
+    //         //만료
+    //         case 4:
+    //             filterData = subscribeList.filter((row) =>  !isSameDay(new Date(),new Date(row.next_payment_date)) && isPast(new Date(row.next_payment_date))
+    //             );
+    //             break;
+    //     }
         
-        setFilteredData(filterData);
-    }
+    //     setFilteredData(filterData);
+    // }
                      
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={9}>
                 <Paper elevation={3} style={{ padding: 20, minHeight: '590px' }}>
-                <Grid className="btn-tabs">
-                  <Button variant="outlined" color="secondary" size="medium" sx={{mr: 2}} onClick={() => filterData(1)}>전체</Button>
-                  <Button variant="outlined" color="info" size="medium" sx={{mr: 2}} onClick={() => filterData(3)}>오늘 결제(완료)</Button>
-                  <Button variant="outlined" color="success" size="medium" sx={{mr: 2}} onClick={() => filterData(2)}>사용중</Button>
-                  <Button variant="outlined" color="error" size="medium" sx={{mr: 2}} onClick={() => filterData(4)}>만료</Button>
-                </Grid>
-                <ScrollX>
-                    {
+
+                  {/* 상단 검색 영역 */}
+                  <Grid className="btn-tabs" style={{display: 'flex',alignItems: 'center',gap: '10px'}}>
+                    <Stack spacing={1.25}>
+                      <FormControl fullWidth>
+                          <Select labelId="demo-simple-select-label" 
+                          value={status} onChange={handleStatue} defaultValue={1}>
+                              <MenuItem value={1}>전체</MenuItem>
+                              <MenuItem value={2}>구독중</MenuItem>
+                              <MenuItem value={3}>만료</MenuItem>
+                          </Select>
+                      </FormControl>
+                    </Stack>
+
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DesktopDatePicker
+                      format="yyyy-MM-dd"
+                      name='next_payment_date'
+                      value={startDate} onChange={handleStartDate}
+                      renderInput={(params) => <TextField {...params} />}
+                      />
+                      -
+                      <DesktopDatePicker
+                      format="yyyy-MM-dd"
+                      name='next_payment_date'
+                      value={endDate} onChange={handleEndDate}
+                      renderInput={(params) => <TextField {...params} />}
+                      />
+                    </LocalizationProvider>
+
+                    <Button type="button" variant="contained" size="large" onClick={()=>search()}>
+                      검색
+                    </Button>
+                    <Button type="button" variant="contained"size="large" onClick={()=>searchReset()}>
+                      초기화
+                    </Button>
+                  </Grid>
+
+                  {/* 테이블 영역 */}
+                  <ScrollX>
+                      {
                         filteredData.length > 0 &&
                         <ReactTable columns={columns} data={filteredData} setSelectedRow={setSelectedRow} selectedRow={selectedRow} />
-                    }
-                </ScrollX>
+                      }
+                  </ScrollX>
                 </Paper>
             </Grid>
 

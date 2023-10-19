@@ -16,7 +16,7 @@ import axios from "utils/axios";
 const InitialValues = {
     mem_userid: '',
     subscribe_type: '',
-    next_payment_date: '',
+    next_payment_date: new Date(),
     renewal: ''
 };
 
@@ -29,9 +29,11 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
         formik.setValues({
             mem_userid: updateData?.mem_userid ? updateData?.mem_userid : '',
             subscribe_type: updateData?.subscribe_type ? updateData?.subscribe_type : '',
-            next_payment_date: updateData?.next_payment_date ? new Date(updateData?.next_payment_date) : '',
+            next_payment_date: updateData?.next_payment_date ? new Date(updateData?.next_payment_date) : new Date(),
             renewal: updateData?.renewal == 1 ? 1 : 0 
         });
+        formik.setErrors({});
+        console.log('########################################');
         console.log(updateData);
     },[updateData])
 
@@ -126,9 +128,9 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
                       <Stack spacing={1.25}>
                         <InputLabel htmlFor="customer-email">구독정보</InputLabel>
                         <FormControl fullWidth>
-                            <Select labelId="demo-simple-select-label"  defaultValue="PLUS_SUPER" {...getFieldProps('subscribe_type')}>
-                                <MenuItem value={'PLUS_MONTHLY'}>유료회원(월결제)</MenuItem>
-                                <MenuItem value={'PLUS_SUPER'}>유료회원(결제X)</MenuItem>
+                            <Select labelId="demo-simple-select-label"  defaultValue="PREMIUM_SUPER" {...getFieldProps('subscribe_type')}>
+                                <MenuItem value={'PREMIUM_MONTHLY'}>Premium(월결제)</MenuItem>
+                                <MenuItem value={'PREMIUM_SUPER'}>Premium(미결제)</MenuItem>
                                 <MenuItem value={'ENTERPRISE'}>Enterprise</MenuItem>
                             </Select>
                         </FormControl>
