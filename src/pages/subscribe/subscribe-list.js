@@ -432,6 +432,8 @@ const SubscribeList = () => {
                         <ReactTable columns={columns} data={filteredData} setSelectedRow={setSelectedRow} selectedRow={selectedRow} />
                       }
                   </ScrollX>
+                  {/* 빈값 */}
+                  <Grid className="tbl-nodata">해당 테이블에 일치하는 데이터가 없습니다.</Grid>
                 </Paper>
             </Grid>
 
