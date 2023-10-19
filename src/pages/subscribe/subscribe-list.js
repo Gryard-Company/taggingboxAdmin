@@ -21,6 +21,7 @@ import SubscribeInfo from "sections/subscribe/SubscribeInfo";
 import { GlobalFilter } from 'utils/react-table';
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import ko from 'date-fns/locale/ko';
 
 // ==============================|| REACT TABLE ||============================== //
 
@@ -283,7 +284,7 @@ const SubscribeList = () => {
           }
           },
           {
-            Header: '최초결제일',
+            Header: '최초 결제일',
             accessor: 'first_payment_date',
             Cell: ({row}) => {
                 const {values} = row;
@@ -293,7 +294,7 @@ const SubscribeList = () => {
             }
           },
           {
-            Header: '다음결제일',
+            Header: '다음 결제일',
             accessor: 'next_payment_date',
             Cell: ({row}) => {
                 const {values} = row;
@@ -303,7 +304,7 @@ const SubscribeList = () => {
             }
           },
           {
-            Header: '구독유지기간',
+            Header: '구독 유지기간',
             accessor: 'subscribe_period',
             Cell: ({row}) => {
                 const {values} = row;
@@ -386,7 +387,7 @@ const SubscribeList = () => {
 
                   {/* 상단 검색 영역 */}
                   <Grid className="btn-tabs" style={{display: 'flex',alignItems: 'center',gap: '10px'}}>
-                    <Stack spacing={1.25}>
+                    <Stack spacing={1.25} sx={{width: '100px'}}>
                       <FormControl fullWidth>
                           <Select labelId="demo-simple-select-label" 
                           value={status} onChange={handleStatue} defaultValue={1}>
@@ -397,26 +398,29 @@ const SubscribeList = () => {
                       </FormControl>
                     </Stack>
 
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}
+                       adapterLocale={ko}>
                       <DesktopDatePicker
                       format="yyyy-MM-dd"
                       name='next_payment_date'
                       value={startDate} onChange={handleStartDate}
                       renderInput={(params) => <TextField {...params} />}
+                       sx={{width: '200px'}}
                       />
-                      -
+                      ~
                       <DesktopDatePicker
                       format="yyyy-MM-dd"
                       name='next_payment_date'
                       value={endDate} onChange={handleEndDate}
                       renderInput={(params) => <TextField {...params} />}
+                       sx={{width: '200px'}}
                       />
                     </LocalizationProvider>
 
-                    <Button type="button" variant="contained" size="large" onClick={()=>search()}>
-                      검색
+                    <Button type="button" variant="contained" size="large" onClick={()=>search()} sx={{height: '48px'}}>
+                      목록 필터설정
                     </Button>
-                    <Button type="button" variant="contained"size="large" onClick={()=>searchReset()}>
+                    <Button type="button" variant="contained"size="large" color="secondary" onClick={()=>searchReset()} sx={{marginLeft: 'auto', opacity: '.4'}}>
                       초기화
                     </Button>
                   </Grid>

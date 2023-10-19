@@ -9,7 +9,8 @@ const { Grid, Stack, InputLabel, TextField, DialogTitle, Divider, DialogContent,
 
 import * as Yup from 'yup';
 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import ko from 'date-fns/locale/ko';
 import { useEffect } from "react";
 import axios from "utils/axios";
 
@@ -102,7 +103,7 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
     let today = new Date();
     return (
         <FormikProvider value={formik}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ko}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
             <DialogTitle>{updateData ? '구독정보 수정' : '구독정보 신규'}</DialogTitle>
             <Divider />
@@ -126,7 +127,7 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
                     </Grid>
                     <Grid item xs={12}>
                       <Stack spacing={1.25}>
-                        <InputLabel htmlFor="customer-email">구독정보</InputLabel>
+                        <InputLabel htmlFor="customer-email">구독 정보</InputLabel>
                         <FormControl fullWidth>
                             <Select labelId="demo-simple-select-label"  defaultValue="PREMIUM_SUPER" {...getFieldProps('subscribe_type')}>
                                 <MenuItem value={'PREMIUM_MONTHLY'}>Premium(월결제)</MenuItem>
@@ -138,7 +139,7 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
                     </Grid>
                     <Grid item xs={12}>
                       <Stack spacing={1.25}>
-                        <InputLabel htmlFor="subscribe-next-payment-date">다음결제일</InputLabel>
+                        <InputLabel htmlFor="subscribe-next-payment-date">다음 결제일</InputLabel>
                         <DesktopDatePicker
                         format="yyyy-MM-dd"
                         value={formik.values?.next_payment_date}
