@@ -15,6 +15,7 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const MemberList = Loadable(lazy(() => import('pages/member/member-list')));
 const OrderList = Loadable(lazy(() => import('pages/order/order-list')));
 const SubscribeList = Loadable(lazy(() => import('pages/subscribe/subscribe-list')));
+const PostList = Loadable(lazy(() => import('pages/post/post-list')));
 
 // ==============================|| MAIN ROUTES ||============================== //
 
@@ -40,6 +41,10 @@ const MainRoutes = {
         {
           path: 'subscribe-list',
           element: <SubscribeList />
+        },
+        {
+          path: 'post-list',
+          element: <PostList />
         }
       ]
     },

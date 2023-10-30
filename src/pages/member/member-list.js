@@ -24,7 +24,7 @@ import { GlobalFilter } from 'utils/react-table';
 // ==============================|| REACT TABLE ||============================== //
 
 function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
-    console.log(selectedRow);
+
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
