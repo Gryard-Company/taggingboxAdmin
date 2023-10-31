@@ -194,7 +194,9 @@ const AddPost = ({ item, getList, type, setSelectedRow }) => {
       <FormikProvider value={formik}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <DialogTitle sx={{ p: 0, pb: 3 }}>{ (type !== 'qna' && item) || item?.answer_id  ? '게시물 정보 수정' : '신규 게시물 등록'}</DialogTitle>
+            <DialogTitle sx={{ p: 0, pb: 3 }}>
+                { (type !== 'qna' && item) || item?.answer_id  ? '게시물 정보 수정' : type == 'qna' ? '문의내용' : '신규 게시물 등록'}
+            </DialogTitle>
             <Divider />
             <DialogContent sx={{ p: 0, pt: 3, pb: 3 }} >
               <Grid container spacing={3}>
@@ -241,11 +243,13 @@ const AddPost = ({ item, getList, type, setSelectedRow }) => {
                     {type === 'qna' ? 
                     <Grid item xs={12}>
                         <Stack spacing={1.25}>
-                            <InputLabel htmlFor="question">질문 내용</InputLabel>
+                            <InputLabel htmlFor="question">내용</InputLabel>
                             <TextField
                             className='qna-textarea'
                             fullWidth
-                            disabled
+                            InputProps={{
+                                readOnly: true, // 읽기 전용으로 설정
+                              }}
                             multiline
                             rows={6}
                             {...getFieldProps('question')}
