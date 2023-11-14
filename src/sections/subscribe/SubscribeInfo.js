@@ -5,7 +5,7 @@ import { Form, FormikProvider, useFormik } from "formik";
 import { dispatch } from "store";
 import { openSnackbar } from "store/reducers/snackbar";
 
-const { Grid, Stack, InputLabel, TextField, DialogTitle, Divider, DialogContent, DialogActions, Button, FormControl, Select, MenuItem } = require("@mui/material")
+const { Grid, Stack, InputLabel, TextField, DialogTitle, Divider, DialogContent, DialogActions, Button, FormControl, Select, MenuItem, Typography } = require("@mui/material")
 
 import * as Yup from 'yup';
 
@@ -34,7 +34,6 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
             renewal: updateData?.renewal == 1 ? 1 : 0 
         });
         formik.setErrors({});
-        console.log('########################################');
         console.log(updateData);
     },[updateData])
 
@@ -53,8 +52,9 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
                 subscribe_type: values.subscribe_type,
                 next_payment_date: format(new Date(values.next_payment_date),'yyyy-MM-dd HH:mm:ss'),
                 renewal: values.renewal,
-                type: !updateData ? 'new' : 'update'
+                type: updateData?.subscribe_type == 'basic' ? 'new' : 'update'
             }
+
             axios.post('api/admin/subscribe-save',param
             ).then((res)=> {
                 console.log(res.data);
@@ -105,82 +105,95 @@ const SubscribeInfo = ({updateData, getSubscribeList}) => {
         <FormikProvider value={formik}>
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ko}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            <DialogTitle>{updateData ? '구독정보 수정' : '구독정보 신규'}</DialogTitle>
+            <DialogTitle>구독정보 수정</DialogTitle>
             <Divider />
-            <DialogContent sx={{ p: 2.5 }}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={12}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                      <Stack spacing={1.25}>
-                        <InputLabel htmlFor="user-id">아이디</InputLabel>
-                        <TextField
-                          fullWidth
-                          id="user-id"
-                          placeholder="아이디를 입력해주세요"
-                          {...getFieldProps('mem_userid')}
-                          disabled={updateData != undefined}
-                          error={Boolean(touched.mem_userid && errors.mem_userid)}
-                          helperText={touched.mem_userid && errors.mem_userid}
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack spacing={1.25}>
-                        <InputLabel htmlFor="customer-email">구독 정보</InputLabel>
-                        <FormControl fullWidth>
-                            <Select labelId="demo-simple-select-label"  defaultValue="PREMIUM_SUPER" {...getFieldProps('subscribe_type')}>
-                                <MenuItem value={'PREMIUM_MONTHLY'}>Premium(월결제)</MenuItem>
-                                <MenuItem value={'PREMIUM_SUPER'}>Premium(미결제)</MenuItem>
-                                <MenuItem value={'ENTERPRISE'}>Enterprise</MenuItem>
-                            </Select>
-                        </FormControl>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack spacing={1.25}>
-                        <InputLabel htmlFor="subscribe-next-payment-date">다음 결제일</InputLabel>
-                        <DesktopDatePicker
-                        format="yyyy-MM-dd"
-                        value={formik.values?.next_payment_date}
-                        name={'next_payment_date'}
-                        defaultValue={today}
-                        onChange={(value) => {
-                            formik.setFieldValue('next_payment_date', Date.parse(value));
-                        }}
-                        // {...getFieldProps('next_payment_date')}
-                        renderInput={(params) => <TextField {...params} />}
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack spacing={1.25}>
-                        <InputLabel htmlFor="member-passwordChk">갱신여부</InputLabel>
-                        <FormControl fullWidth>
-                            <Select labelId="demo-simple-select-label"  defaultValue="1" {...getFieldProps('renewal')}>
-                                <MenuItem value={1}>갱신</MenuItem>
-                                <MenuItem value={0}>미갱신</MenuItem>
-                            </Select>
-                        </FormControl>
-                      </Stack>
-                    </Grid>
-                    
+            {
+              !updateData ?
+              <DialogContent sx={{ p: 2.5 }}>
+                <Grid container spacing={10} direction="column"  justifyContent="center" alignItems="center" >
+                  <Grid item xs={12} md={12}>
+                    <Typography align="center"> 수정할 회원정보를 클릭해주세요. </Typography>
                   </Grid>
                 </Grid>
-              </Grid>
-            </DialogContent>
-            <Divider />
-            <DialogActions sx={{ p: 3, pb: 0 }}>
-              <Grid container justifyContent="flex-end" alignItems="center">
-                <Grid item>
-                  <Stack direction="row" spacing={2} alignItems="center">
-                    <Button type="submit" variant="contained" disabled={isSubmitting} size="large">
-                      {updateData ? '수정하기' : '등록하기'}
-                    </Button>
-                  </Stack>
+              </DialogContent>
+              :
+              <>
+              <DialogContent sx={{ p: 2.5 }}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={12}>
+                        <Stack spacing={1.25}>
+                          <InputLabel htmlFor="user-id">아이디</InputLabel>
+                          <TextField
+                            fullWidth
+                            id="user-id"
+                            placeholder="아이디를 입력해주세요"
+                            {...getFieldProps('mem_userid')}
+                            disabled={updateData != undefined}
+                            error={Boolean(touched.mem_userid && errors.mem_userid)}
+                            helperText={touched.mem_userid && errors.mem_userid}
+                          />
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Stack spacing={1.25}>
+                          <InputLabel htmlFor="customer-email">구독 정보</InputLabel>
+                          <FormControl fullWidth>
+                              <Select labelId="demo-simple-select-label"  defaultValue="PREMIUM_SUPER" {...getFieldProps('subscribe_type')}>
+                                  <MenuItem value={'PREMIUM_MONTHLY'}>Premium(월결제)</MenuItem>
+                                  <MenuItem value={'PREMIUM_SUPER'}>Premium(관리자)</MenuItem>
+                                  <MenuItem value={'ENTERPRISE'}>Enterprise</MenuItem>
+                              </Select>
+                          </FormControl>
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Stack spacing={1.25}>
+                          <InputLabel htmlFor="subscribe-next-payment-date">구독 유효기간(다음 결제일)</InputLabel>
+                          <DesktopDatePicker
+                          format="yyyy-MM-dd"
+                          value={formik.values?.next_payment_date}
+                          name={'next_payment_date'}
+                          defaultValue={today}
+                          onChange={(value) => {
+                              formik.setFieldValue('next_payment_date', Date.parse(value));
+                          }}
+                          // {...getFieldProps('next_payment_date')}
+                          renderInput={(params) => <TextField {...params} />}
+                          />
+                        </Stack>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Stack spacing={1.25}>
+                          <InputLabel htmlFor="member-passwordChk">자동결제여부</InputLabel>
+                          <FormControl fullWidth>
+                              <Select labelId="demo-simple-select-label"  defaultValue="1" {...getFieldProps('renewal')}>
+                                  <MenuItem value={1}>자동결제</MenuItem>
+                                  <MenuItem value={0}>취소(미결제)</MenuItem>
+                              </Select>
+                          </FormControl>
+                        </Stack>
+                      </Grid>
+                      
+                    </Grid>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </DialogActions>
+              </DialogContent>
+              <Divider />
+              <DialogActions sx={{ p: 3, pb: 0 }}>
+                <Grid container justifyContent="flex-end" alignItems="center">
+                  <Grid item>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Button type="submit" variant="contained" disabled={isSubmitting} size="large">
+                        수정하기
+                      </Button>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </DialogActions>
+              </>
+            }
           </Form>
         </LocalizationProvider>
       </FormikProvider>

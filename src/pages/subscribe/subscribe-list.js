@@ -97,7 +97,7 @@ function ReactTable({ columns, data, setSelectedRow, selectedRow }) {
               <Button onClick={() => setSelectedRow(null)} color="success" size="large" variant="contained" className="btn-xl">
                 <CSVExport data={selectedFlatRows.length > 0 ? selectedFlatRows.map((d) => d.original) : data} filename={'customer-list.csv'} />목록 다운로드
               </Button>
-              <Button onClick={() => setSelectedRow(null)} color="warning" size="large" variant="contained" className="btn-new">새로 생성하기</Button>
+              {/* <Button onClick={() => setSelectedRow(null)} color="warning" size="large" variant="contained" className="btn-new">새로 생성하기</Button> */}
             </Stack>
           </Stack>
           <Table {...getTableProps()}>
@@ -193,6 +193,10 @@ const SubscribeList = () => {
               filterData = subscribeList.filter((row) =>  !isSameDay(new Date(),new Date(row.next_payment_date)) && isPast(new Date(row.next_payment_date))
               );
               break;
+          //만료
+          case 4:
+              filterData = subscribeList.filter((row) =>  row.subscribe_type == 'basic');
+              break;
       }
 
       // 2. 기간별 필터
@@ -261,11 +265,14 @@ const SubscribeList = () => {
                         break;
 
                     case 'PREMIUM_SUPER':
-                        subscribe_type = 'Premium(미결제)'
+                        subscribe_type = 'Premium(관리자)'
                         break;
 
                     case 'ENTERPRISE':
                         subscribe_type = 'Enterprise'
+                        break;
+                    case 'basic':
+                        subscribe_type = 'Basic'
                         break;
                 }
                 return (
@@ -285,11 +292,11 @@ const SubscribeList = () => {
           },
           {
             Header: '최초 결제일',
-            accessor: 'first_payment_date',
+            accessor: 'input_dt',
             Cell: ({row}) => {
                 const {values} = row;
                 return (
-                   <>{ values?.first_payment_date ? format(new Date(values.first_payment_date),'yyyy-MM-dd') : ''}</>
+                   <>{ values?.input_dt ? format(new Date(values.input_dt),'yyyy-MM-dd') : '-'}</>
                 )
             }
           },
@@ -299,7 +306,7 @@ const SubscribeList = () => {
             Cell: ({row}) => {
                 const {values} = row;
                 return (
-                   <>{ values?.next_payment_date ? format(new Date(values.next_payment_date),'yyyy-MM-dd') : ''}</>
+                   <>{ values?.next_payment_date ? format(new Date(values.next_payment_date),'yyyy-MM-dd') : '-'}</>
                 )
             }
           },
@@ -309,7 +316,7 @@ const SubscribeList = () => {
             Cell: ({row}) => {
                 const {values} = row;
 
-                let monthsDifference = differenceInMonths(new Date(),new Date(values.first_payment_date));
+                let monthsDifference = values.input_dt ? differenceInMonths(new Date(),new Date(values.input_dt)) : 0;
 
                 return (
                    <>{ monthsDifference }개월</>
@@ -337,7 +344,14 @@ const SubscribeList = () => {
 
                 return (
                     <>
-                        {isSameDay(nextPaymentDate,today) ? <Typography style={{'color':'blue'}}>갱신일</Typography> : (isBefore(today,nextPaymentDate) ? (<Typography style={{'color':'green'}}>구독중</Typography>) : (<Typography style={{'color':'red'}}>만료</Typography>))}
+                        {
+                        values.subscribe_type == 'basic' ?
+                        (<Typography style={{'color':'red'}}>미구독</Typography>)
+                        :(
+                        isSameDay(nextPaymentDate,today) ? 
+                          <Typography style={{'color':'blue'}}>갱신일</Typography> : (isBefore(today,nextPaymentDate) 
+                          ? 
+                          (<Typography style={{'color':'green'}}>구독중</Typography>) : (<Typography style={{'color':'red'}}>만료</Typography>)))}
                     </>
                 )
             }
@@ -394,6 +408,7 @@ const SubscribeList = () => {
                               <MenuItem value={1}>전체</MenuItem>
                               <MenuItem value={2}>구독중</MenuItem>
                               <MenuItem value={3}>만료</MenuItem>
+                              <MenuItem value={4}>미구독</MenuItem>
                           </Select>
                       </FormControl>
                     </Stack>
